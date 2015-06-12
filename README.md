@@ -1,10 +1,5 @@
-# TEST README
+# ERIS
 
-Default text. Add.
-Amend commit.
-Push no 2.
-quick commit from ST3 *correction* .
-Test using Oaut
-**Oauth 2**
+Text here.
 
-hahaha
+Instructions.
