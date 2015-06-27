@@ -1,0 +1,16 @@
+<launch>
+
+	<arg name="color_similarity_threshold" default="70" />
+	<arg name="texture_similarity_threshold" default="70" />
+	
+	<!-- WARNING! ONLY CHANGE THIS WHEN YOU WANT TO SAMPLE AN OBJECT-->
+	<!-- CARELESS USAGE MAY OVERWRITE THE BAXTER'S CURRENT MEMORIES -->
+	<arg name="sampling_process" default="false" />
+
+	<node pkg="eris" type="encoder_node" name="encoder" output="screen" respawn="false">
+		<param name="sampleSingleObject" value="$(arg sampling_process)"/>
+		<param name="colorThres" value="$(arg color_similarity_threshold)"/>
+		<param name="textureThres" value="$(arg texture_similarity_threshold)"/>
+	</node>
+
+</launch>

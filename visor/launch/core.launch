@@ -1,0 +1,5 @@
+<launch>
+
+	<include file="$(find visor)/launch/perception.xml" />
+
+</launch>

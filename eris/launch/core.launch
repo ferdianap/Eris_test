@@ -1,0 +1,7 @@
+<launch>
+
+	<include file="$(find visor)/launch/perception.xml" />
+	<include file="$(find eris)/launch/encoder.xml" />
+	<!--include file="$(find eris)/launch/qservers.xml" /-->
+
+</launch>

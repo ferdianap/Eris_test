@@ -1,0 +1,4 @@
+<launch>
+	<!--test test-name="test_memory_module" pkg="eris" type="test_memory_module" /-->
+	<!-- <test test-name="test_tro" pkg="eris" type="test_tro" /> -->
+</launch>
