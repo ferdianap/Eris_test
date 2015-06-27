@@ -1,6 +1,0 @@
-<launch>
-
-	<!-- <include file="$(find eris)/launch/qservers.xml" /> -->
-	<node pkg="eris" type="query_server" name="qserver" output="screen" respawn="false" />
-
-</launch>
