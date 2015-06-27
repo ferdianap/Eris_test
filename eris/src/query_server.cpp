@@ -4,7 +4,6 @@
 #include <eris/encode_tmp_ffi.hpp> // for only intToString
 #include <eris/hricase1.hpp>
 #include <eris/hricase2.hpp>
-#include <eris/hricase3.hpp>
 
 /**
  * This is the main callback function
@@ -35,8 +34,7 @@ void getResultList (
 		iter != req.lexicalinfo.end(); ++iter) {
 		res.multi_responses.push_back("* "+*iter);
 	}
-	// --- Confirming input Done ---
-	// TODO: continue here with the question
+	// --- Confirming input ---
 	switch (req.icase) {
 	case 2: {
 		Case2 c2;
@@ -45,11 +43,6 @@ void getResultList (
 		} else break;
 		break;
 	}
-	case 3: {
-		Case3 c3;
-
-	}
-		break;
 	default: {
 		Case1 c1;
 		c1.init();
