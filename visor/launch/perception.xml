@@ -1,0 +1,26 @@
+<launch>
+
+	<include file="$(find visor)/launch/camera_setting.xml" />
+  
+	<arg name="max_blob_count" default="30" />
+	<arg name="entropy_ratio" default="0.66" />
+
+
+	<node pkg="visor" type="img_chnldvdr_node" name="img_channeldivider" />
+
+	<node pkg="visor" type="saliency_det_node" name="saliency_detection" output="screen">
+		<param name="maxblobcount" value="$(arg max_blob_count)"/>
+		<param name="entropyratio" value="$(arg entropy_ratio)"/>
+	</node>
+
+	<node pkg="visor" type="attn_window_node" name="attention_window" output="screen">
+		<param name="displayFirstObject" value="false" /> <!--WARNING!: setting this value to true may cause a significant delay-->
+	</node >
+
+	<node pkg="visor" type="local_color_node" name="local_color_info_extractor" output="screen" />
+
+	<node pkg="visor" type="local_shape_node" name="local_shape_descriptor" output="screen" />
+
+	
+
+</launch>

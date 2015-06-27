@@ -1,0 +1,6 @@
+<launch>
+
+	<!-- Use to run two nodes at the same time in a separate terminals -->
+	<node name="query_servers" pkg="eris" type="run-qservers.sh" />
+
+</launch>
