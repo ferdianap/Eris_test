@@ -123,11 +123,13 @@ void Case1::processFeaturesFromInputScene() {
     blobCnt_ = bblobs_.size(); // bblobs_ is a vector<cv::Rect>
     // Then we use the method of attn_window_node to crop the
     // image based on bblobs_,
+    printf("blobcnt = %d\n",blobCnt_);
     ObjectExtractor oe;
 	oe.setBlobCount(blobCnt_);
 	for (int i = 0; i < blobCnt_; ++i) {
 		int maxxTMP = bblobs_[i].x + bblobs_[i].width;
 		int maxyTMP = bblobs_[i].y + bblobs_[i].height;
+		printf("%d, %d, %d, %d\n",bblobs_[i].x, bblobs_[i].y, maxxTMP, maxyTMP);
 		oe.setBlobsManually(bblobs_[i].x, bblobs_[i].y, maxxTMP, maxyTMP);
 		// also set objs2dPos_
 		objs2dPos_.push_back(assignPosValue(bblobs_[i].x, maxxTMP, bblobs_[i].y, maxyTMP));

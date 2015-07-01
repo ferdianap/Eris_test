@@ -4,7 +4,6 @@
 #include <string>
 
 #include <eris/hricase1.hpp>
-#include <eris/tag.h>
 
 template<typename T, size_t N>
 T * end(T (&ra)[N]) {

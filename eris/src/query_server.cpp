@@ -4,6 +4,7 @@
 #include <eris/encode_tmp_ffi.hpp> // for only intToString
 #include <eris/hricase1.hpp>
 #include <eris/hricase2.hpp>
+#include <eris/hricase3.hpp>
 
 /**
  * This is the main callback function
@@ -34,15 +35,28 @@ void getResultList (
 		iter != req.lexicalinfo.end(); ++iter) {
 		res.multi_responses.push_back("* "+*iter);
 	}
-	// --- Confirming input ---
+	// --- Confirming input Done ---
 	switch (req.icase) {
 	case 2: {
 		Case2 c2;
 		if (c2.init(req.lexicalinfo)) {
 			res.multi_responses.push_back(c2.answerQuestion(req.question));
 		} else break;
-		break;
 	}
+		break;
+	case 3: {
+		Case1 c1;
+		c1.init();
+		c1.processFeaturesFromInputScene();
+		Case3 c3;
+		if (c3.init(req.lexicalinfo)) {
+			c3.setObjCount(c1.getObjCount());
+			c3.setColorFeats(c1.getColorFeats());
+			c3.setTextureFeats(c1.getTextureFeats());
+			res.multi_responses.push_back(c3.answerQuestion(req.question));
+		} else break;
+	}
+		break;
 	default: {
 		Case1 c1;
 		c1.init();

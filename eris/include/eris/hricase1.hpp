@@ -98,5 +98,11 @@ public:
 	inline int getNumOfFamiliarObjs() { return objsFam_.size(); }
 	inline int getNumOfFamiliarScns() { return scnres_.label.size(); }
 	std::string answerQuestion(int q);
+	inline int getObjCount() { return blobCnt_; }
+
+	inline std::vector<std::vector<int> > getColorFeats() { return colorFeats_; }
+	inline std::vector<std::vector<int> > getTextureFeats() { return textureFeats_; }
+	// TODO: add getTopObjRes, similar to computeTopLabel but return object_result with only 1 result
+
 };
 #endif

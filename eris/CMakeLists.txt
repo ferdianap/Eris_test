@@ -135,6 +135,7 @@ target_link_libraries (encode_tmp_ffi  ${catkin_LIBRARIES} )
 add_library           (memproc
   src/memoryproc/hricase1.cpp
   src/memoryproc/hricase2.cpp
+  src/memoryproc/hricase3.cpp
 )
 add_dependencies      (memproc  ${eris_EXPORTED_TARGETS} )
 target_link_libraries (memproc
