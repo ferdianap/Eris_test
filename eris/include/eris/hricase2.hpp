@@ -30,6 +30,7 @@ public:
 	std::string processContextInputObject();
 	std::string processContextInputScene();
 	std::string answerQuestion(int q);
+	std::string getAnswer(int q);
 };
 
 #endif

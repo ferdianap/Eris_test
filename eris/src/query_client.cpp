@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 				std::cout << "Universal Client Program ver. 0.1.0\n\n"
 					"Basic Command Line Parameter App\n" << desc << "\n"
 					"Example query (case 3, question 2, with context):\n"
-					"rosrun eris query_client -c 3 -q 2 -l orange -l round\n"
+					"rosrun eris query_client -c 3 -q 1 -l leftmost -l lamp\n"
 					"Valid Case:\n"
 					"  1. Image only\n  2. Context only\n  3. Image+Context\n\n"
 					"Make sure that the `vision.JPG` image is located in the folder `BaxterVision`. (This serves as an alternative for live visual stimuli during HRI.)\n"
@@ -50,14 +50,13 @@ int main(int argc, char** argv) {
 				printBlue("<ctx>     = valid for Case 2,\n");
 				printMagenta("<img/ctx> = valid for all cases.\n\n");
 				printMagenta("  1. Are you familiar w/ <img/ctx>?\n");
-				printYellow("  2. What is/are <img>? (also works for multiple objects)\n");
-				printMagenta("  3. What kind of <img/ctx> did you presented with?\n");
-				printMagenta("  4. How many of <img/ctx> have you seen so far?\n");
-				printMagenta("  5. Did you remove any of <img/ctx>?\n");
-				printMagenta("  6. Did you move any of <img/ctx>?\n");
-				printMagenta("  7. How many objects left after you remove <img/ctx>?\n");
-				printBlue("  8. What <ctx> object did you move?\n");
-				printMagenta("  9. How many <img/ctx> at least were in the workspace?\n");
+				printBlue("  2. What kind of <ctx> did you presented with? (result combined w/ q1)\n");
+				printBlue("  3. How many of <ctx> have you seen so far?\n");
+				printBlue("  4. Did you remove any of <ctx>?\n");
+				printBlue("  5. Did you move any of <ctx>?\n");
+				printBlue("  6. How many objects left after you remove <ctx>?\n");
+				printBlue("  7. What <ctx> object did you move? (result combined w/ q5)\n");
+				printBlue("  8. How many objects at least were in the workspace?\n");
 				return SUCCESS;
 			}
 

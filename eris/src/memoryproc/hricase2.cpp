@@ -4,6 +4,7 @@
 #include <eris/file_operations.hpp>
 #include <eris/encode_tmp_ffi.hpp>
 #include <eris/tag.h>
+#include <algorithm>    // std::sort
 
 const char *vinit[] = {"leftmost", "rightmost", "atleast", "other", "objs"};
 std::vector<std::string> Case2::keywordsTemplate_(vinit, end(vinit));
@@ -41,6 +42,35 @@ template <class ForwardIterator>
   }
   return index;
 }
+
+/*
+ * a function object that allows to compare
+ * the iterators by the value they point to
+ */
+template < class RAIter, class Compare >
+class IterSortComp
+{
+    public:
+        IterSortComp ( Compare comp ): m_comp ( comp ) { }
+        inline bool operator( ) ( const RAIter & i, const RAIter & j ) const
+        {
+            return m_comp ( * i, * j );
+        }
+    private:
+        const Compare m_comp;
+};
+
+template <class INIter, class RAIter, class Compare>
+void itersort ( INIter first, INIter last, std::vector < RAIter > & idx, Compare comp )
+{ 
+    idx.resize ( std::distance ( first, last ) );
+    for ( typename std::vector < RAIter >::iterator j = idx.begin( ); first != last; ++ j, ++ first )
+        * j = first;
+
+    std::sort ( idx.begin( ), idx.end( ), IterSortComp< RAIter, Compare > ( comp ) );
+}
+
+
 
 Case2::Case2() {
 }
@@ -305,6 +335,119 @@ std::string Case2::processContextInputScene() {
 // }
 
 
+std::string Case2::getAnswer(int q) {
+	std::string ans("");
+	if (q==2) {
+		// get the object label out of ctx (q2)
+		if (context_.size() == 1) {
+			eris::tag tag = read_ffi_tag(context_[0]);
+			std::vector<std::string>::iterator iter;
+			for (iter = tag.assoc_obj.begin(); iter != tag.assoc_obj.end(); ++iter) {
+				ans += "\n * "+*iter;
+			}
+		}
+	} else if (q==3) {
+		if (context_.size() == 1) {
+			eris::tag tag = read_ffi_tag(context_[0]);
+			ans += "\n * "+intToString(tag.assoc_obj.size())+" "+context_[0]+"s were presented.";
+		}
+	} else if (q==8) {
+		// check the each scene and store the least obj count
+		const std::string em("SE_");
+		std::vector<std::string> scenelist = getFileList(MEMORY_DIR, em);
+		std::vector<std::string>::iterator iter;
+		int leastCnt = 50; // arbitrary big number
+		for (iter = scenelist.begin(); iter != scenelist.end(); ++iter) {
+			eris::episode epi = read_em(*iter); // read each episode
+			if (epi.obj_count < leastCnt) leastCnt = epi.obj_count;
+		}
+		ans += "\n * "+intToString(leastCnt)+" objects at least were in the workspace.";
+	} else {
+		// First, read all EM and get the duration and epi_label in a two separate vector
+		bool q4res = false;
+		std::vector<float> durUNORD;
+		std::vector<std::string> scnlabelUNORD;
+		ros::Time ts_now = ros::Time::now();
+		const std::string em("SE_");
+		std::vector<std::string> scenelist = getFileList(MEMORY_DIR, em);
+		std::vector<std::string>::iterator iter;
+		for (iter = scenelist.begin(); iter != scenelist.end(); ++iter) {
+			eris::episode epi  = read_em(*iter);
+			ros::Duration tmp_dur = ts_now - epi.header.stamp;
+			durUNORD.push_back(tmp_dur.toSec());
+			scnlabelUNORD.push_back(epi.label);
+		}
+		// sort the episodes based on durations
+		std::vector<std::vector<float>::const_iterator> durORD;
+		itersort(durUNORD.begin(), durUNORD.end(), durORD, std::less<float>());
+		// Duration less means more recent memories
+		// then, check if the object_label with ctx
+		// is exist in the previous episode but missing in later episodes
+		std::vector<std::string> recentOBJS;
+		std::vector<std::string> removedOBJS;
+		std::vector<std::vector<int> > recentPOS; // <minx, maxx, miny, maxy>
+		for (int i = 0; i < durUNORD.size(); ++i) {
+			float elem = *durORD[i];
+			int dist   = durORD[i] - durUNORD.begin();
+			// printf("\nelement %d = %f \t--> (%d) %f", i, durUNORD[i], dist, elem);
+			// read each EM from the more recent epi, and get all the object labels
+			ROS_WARN_STREAM("Reading epi: "+scenelist[i]);
+			eris::episode epi = read_em(scenelist[i]);
+			if (i==0) {
+				recentOBJS = epi.obj_name;
+				for (int j=0; j < epi.obj_count; ++j) {
+					std::vector<int> p;
+					p.push_back(epi.pos_minx[j]);
+					p.push_back(epi.pos_maxx[j]);
+					p.push_back(epi.pos_miny[j]);
+					p.push_back(epi.pos_maxy[j]);
+					recentPOS.push_back(p);
+				}
+			} // onwards, check if there is another objects, add them as the ans
+			for (int j=0; j<epi.obj_count;++j) {
+				eris::tag readTag = read_ffi_tag(context_[0]);
+				if ((q==5 ||q==7) && stringExistsInVect(epi.obj_name[j], readTag.assoc_obj)
+					&& stringExistsInVect(epi.obj_name[j], recentOBJS)) {
+					// compare current epi pos with recent pos,
+					// and if diff > thres, ans += obj was moved
+					ROS_WARN_STREAM("ASASAS = "+intToString(j));
+					for (int k=0;k<recentOBJS.size();++k) {
+						if (epi.obj_name[j] == recentOBJS[k]) {
+							int diff_minx = abs(epi.pos_minx[k] - recentPOS[j][0]);
+							int diff_maxx = abs(epi.pos_maxx[k] - recentPOS[j][1]);
+							int diff_miny = abs(epi.pos_miny[k] - recentPOS[j][2]);
+							int diff_maxy = abs(epi.pos_miny[k] - recentPOS[j][3]);
+							
+							ROS_WARN_STREAM("diff_minx = "+intToString(diff_minx));
+							ROS_WARN_STREAM("diff_maxx = "+intToString(diff_maxx));
+							ROS_WARN_STREAM("diff_miny = "+intToString(diff_miny));
+							ROS_WARN_STREAM("diff_maxy = "+intToString(diff_maxy));if (diff_minx > 20 || diff_maxy > 20 ||
+								diff_miny > 20 || diff_maxy > 20) {
+								ans += "\n * "+epi.obj_name[j]+" was moved in "+epi.label;
+							}
+						}
+					}
+				}
+				if (q!=5 && q!=7 && stringExistsInVect(epi.obj_name[j],readTag.assoc_obj) &&
+					!stringExistsInVect(epi.obj_name[j],recentOBJS) &&
+					!stringExistsInVect(epi.obj_name[j],removedOBJS)) {
+					removedOBJS.push_back(epi.obj_name[j]);
+					ans += "\n * "+epi.obj_name[j]+" was removed";
+					q4res = true;
+					if (q==6) {
+						eris::episode nxtepi = read_em(scenelist[i-1]);
+						ans += ", "+intToString(nxtepi.obj_count)+" objs remaining.";
+					}
+				}
+			}
+		}
+	}
+	return ans;
+}
+
+
+
+
 // /**
 //  * update matched scenes with the remaining nonKWs_ item
 //  */
@@ -315,13 +458,15 @@ std::string Case2::processContextInputScene() {
 std::string Case2::answerQuestion(int q) {
 	std::string ans("");
 	switch (q) {
-	case 2:
-		break;
-	default: {
+	case 1: {
 		ans += processContextInputObject();
 		ans += processContextInputScene();
 		break;
-	}
+		}
+	default: {
+		ans += getAnswer(q);
+		break;
+		}
 	}
 	return ans;
 }
