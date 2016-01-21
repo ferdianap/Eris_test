@@ -17,8 +17,8 @@
 #include <sys/stat.h>
 
 // Directory of the Persistent Memories in HDD
-static std::string MEMORY_DIR = "/home/ros/memtest/";  
-static std::string FFI_DB_DIR = "/home/ros/FFI_DB/";
+static std::string MEMORY_DIR = "/home/ferdee/memtest/";
+static std::string FFI_DB_DIR = "/home/ferdee/FFI_DB/";
 static std::string INBOXFNAME = "_INBOX.ffi";
 static std::string OBJ        = "OBJ_";
 static std::string DBFNAME    = "_DB.ffi";
@@ -40,7 +40,8 @@ std::string gen_rand_name (const int len);
 
 inline char getUserInput() {
 	char in[1];
-	gets(in);
+	fgets(in, sizeof(in), stdin);
+  //gets(in);
 	return in[0];
 }
 

@@ -16,7 +16,7 @@
 	<arg name="rszd_img_h" default="100" />
 	<arg name="scene_label_format" default="scene%01d" />
 	<arg name="scene_ext" default=".JPG" />
-	<arg name="scene_dir" default="/home/ros/scene_snap/sequence1/" />
+	<arg name="scene_dir" default="/home/ferdee/scene_snap/sequence1/" />
 	
 	
 	<!-- KINECT CAM -->

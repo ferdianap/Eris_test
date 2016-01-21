@@ -198,7 +198,7 @@ std::string gen_rand_mem (
 
 	printYellow("Write this memory? <y/N> ");
 	char ans[1];
-	gets(ans);
+	fgets(ans, sizeof(ans), stdin);//gets(ans);
 	
 	if (ans[0]!='y' && ans[0]!='Y') {
 		std::cout << "Canceled!\n\n";

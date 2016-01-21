@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 	eris::query srv;
 	int icase(1);
 	int question(1);
-  
+
 	try {
 		std::string appName = boost::filesystem::basename(argv[0]);
 		std::vector<std::string> lexinfo;
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 		("question,q", po::value<int>(&question)->required(), "Asked question")
 		("lexicalinfo,l", po::value<std::vector<std::string> >(&lexinfo), "enter multiple context")
 		;
-      
+
 		po::variables_map vm;
 
 		try {
@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
 		if (icase!=2) {
 			// check the folder if image is available
 			const std::string fn("vision.JPG");
-			const std::string RBTVIS_DIR("/home/ros/scene_snap/BaxterVision/");
+			const std::string RBTVIS_DIR("/home/ferdee/scene_snap/BaxterVision/");
 			std::string filestatus("file image exist!");
 			if (!fileExist(RBTVIS_DIR+fn)) {
 				filestatus = "file image NOT FOUND! Check if the File "+fn+" in the Directory "+RBTVIS_DIR+" exist.";
